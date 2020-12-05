@@ -8,6 +8,7 @@ export interface UserModelInterface {
     username: string;
     password: string;
     confirmHash: string;
+    select: string;
     confirmed?: boolean;
     location?: string;
     about?: string;
@@ -42,6 +43,10 @@ const UserSchema = new Schema<UserModelInterface>({
     confirmed: {
         type: Boolean,
         default: false
+    },
+    select: {
+        type: String,
+        required: true
     },
     location: String,
     about: String

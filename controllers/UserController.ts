@@ -36,10 +36,11 @@ class UserController {
                email: req.body.email,
                username: req.body.username,
                fullname: req.body.fullname,
+               select: req.body.select,
                password: generateMD5(req.body.password + process.env.SECRET_KEY),
                confirmHash: generateMD5(process.env.SECRET_KEY + Math.random().toString()),
            }
-          
+           
            const user = await UserModel.create(data);
             
            SendEmail(
@@ -130,7 +131,8 @@ class UserController {
 
     async getUserInfo(req: express.Request, res: express.Response): Promise<void> {
         try {
-            const user = req.body.user ? (req.body.user as UserModelDocumentInterface).toJSON() : undefined;
+            const user = req.user ? (req.user as UserModelDocumentInterface).toJSON() : undefined;
+            console.log(user);
             res.json({
                 status: 'success',
                 data: user,

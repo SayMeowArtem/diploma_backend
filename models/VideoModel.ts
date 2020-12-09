@@ -1,9 +1,11 @@
 import { model, Schema, Document} from 'mongoose';
+import { PlaylistModelInterface } from './playlistModel';
 import { UserModelDocumentInterface } from './UserModel';
 
 export interface VideoModelInterface {
     _id: string;
     owner: UserModelDocumentInterface;
+    playlist: PlaylistModelInterface | string;
     title: string;
     url: string;
     likes: string;
@@ -17,6 +19,11 @@ const VideoSchema = new Schema<VideoModelInterface>({
         required: true,
         ref: 'User',
         type: Schema.Types.ObjectId
+    },
+    playlist: {
+        type: Schema.Types.ObjectId,
+        ref: 'Playlists',
+        required: true
     },
     title: {
         required: true,

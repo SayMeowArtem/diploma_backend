@@ -8,7 +8,6 @@ class VideoController {
     async create( req: any, res: express.Response): Promise<void>{
         try {
             const owner = req.user as UserModelInterface;
-            console.log(owner);
             if (owner?._id) {
                 const errors = validationResult(req);
                 
@@ -21,6 +20,7 @@ class VideoController {
                     owner: owner._id,
                     title: req.body.title,
                     url: req.body.url,
+                    playlist: req.body.playlist_id
                 }
 
                 const video = await VideoModel.create(data);

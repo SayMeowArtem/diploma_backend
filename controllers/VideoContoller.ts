@@ -5,6 +5,36 @@ import { VideoModel } from '../models/VideoModel';
 import { isValidObjectId } from '../utils/isValidObjectId';
 
 class VideoController {
+
+    async index_byPlatlistID(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const user = req.user as UserModelInterface;
+            if (user?._id) {
+                const errors = validationResult(req);
+                
+                if (!errors.isEmpty()) {
+                    res.status(400).json({status: 'error', errors: errors.array()});
+                    return;
+                }
+            const idplaylist = req.params.id;
+
+         const videos = await VideoModel.find({ playlist: idplaylist}).exec();
+
+         res.json({
+             status: 'success',
+             data: videos,
+         });
+    } 
+        }
+        catch (error) {
+            res.status(500).json({
+                status: 'error',
+                message: error,
+            });
+        }
+    }
+
+
     async create( req: any, res: express.Response): Promise<void>{
         try {
             const owner = req.user as UserModelInterface;
@@ -20,7 +50,7 @@ class VideoController {
                     owner: owner._id,
                     title: req.body.title,
                     url: req.body.url,
-                    playlist: req.body.playlist_id
+                    playlist: req.body.playlist
                 }
 
                 const video = await VideoModel.create(data);

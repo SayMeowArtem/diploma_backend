@@ -85,7 +85,7 @@ class UserController {
             }
 
             const user = await UserModel.findOne({confirmHash: hash}).exec();
-            console.log(user);
+         
             if (user) {
                 user.confirmed = true;
                 await user.save();

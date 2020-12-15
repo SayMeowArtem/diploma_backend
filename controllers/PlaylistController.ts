@@ -38,9 +38,9 @@ class PlaylistController {
     async create(req: any, res: express.Response): Promise<void> {
        try {
         const user = req.user as UserModelInterface;
+   
         if (user?._id) {
             const errors = validationResult(req);
-                
                 if (!errors.isEmpty()) {
                     res.status(400).json({status: 'error', errors: errors.array()});
                     return;
@@ -51,7 +51,7 @@ class PlaylistController {
                     title: req.body.title,
                     coverURL: req.body.coverURL
                 }
-
+              
                 const playlist = await PlaylistModel.create(data);
 
                 res.json({
@@ -121,8 +121,12 @@ class PlaylistController {
                 if (playlist) {
                     if (String(user._id) === String(playlist.owner._id)) {
                         const title = req.body.title;
+                        const coverURL = req.body.coverURL;
                         if (title) {
                             playlist.title = title;
+                        }
+                        if (coverURL) {
+                            playlist.coverURL = coverURL;
                         }
                         playlist.save();
                         res.send();

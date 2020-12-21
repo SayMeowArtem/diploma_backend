@@ -26,7 +26,6 @@ const VideoSchema = new Schema<VideoModelInterface>({
         required: true
     },
     title: {
-        required: true,
         type: String
     },
     url: {
@@ -40,6 +39,9 @@ const VideoSchema = new Schema<VideoModelInterface>({
     views: {
         type: String,
         default: 0
+    },
+    discription: {
+        type: String
     }
 }, {
     timestamps: true

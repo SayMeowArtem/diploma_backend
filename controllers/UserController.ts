@@ -25,6 +25,49 @@ class UserController {
        }
    }
 
+   
+
+   async update(req: express.Request, res: express.Response): Promise<void> {
+   
+    // try {
+   
+        const user = req.user as UserModelInterface;
+        const userID = user._id;
+        if (user) {
+           
+            const user= await UserModel.findById(userID);
+          
+            if (user) {
+                    const fullname = req.body.fullname;
+                    const avatar = req.body.avatar;
+                    const discription = req.body.discription
+                    if (fullname) {
+                        user.fullname = fullname;
+                    }
+                    if (avatar) {
+                        user.avatar = avatar;
+                    }
+                    if (discription) {
+                        user.discription = discription;
+                    }
+                    user.save();
+                    res.send();
+                
+             
+            // }
+            // else {
+            //     res.status(404).send();
+            // }
+        }
+    }
+    // catch (error) {
+    //     res.status(500).json({
+    //         status: 'error',
+    //         message: error,
+    //       });        
+    // }
+}
+
     async create(req: express.Request, res: express.Response): Promise<void> {
         try {
            const errors = validationResult(req);
@@ -45,7 +88,7 @@ class UserController {
             
            SendEmail(
                {
-                   emailFrom: 'artem@twitter.com',
+                   emailFrom: 'wotgamelol@gmail.com',
                    emailTo: data.email,
                    subject: 'Подтверждение почты на LearnSpecial',
                    html: `Для того, чтобы подтвердить почту, перейдите <a href="http://localhost:${

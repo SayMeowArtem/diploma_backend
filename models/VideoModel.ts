@@ -10,6 +10,7 @@ export interface VideoModelInterface {
     url: string;
     likes: string;
     views: string;
+    commentsCount?: string;
 }
 
 export type VideoModelDocumentInterface = VideoModelInterface & Document;
@@ -41,6 +42,9 @@ const VideoSchema = new Schema<VideoModelInterface>({
         default: 0
     },
     discription: {
+        type: String
+    },
+    commentsCount: {
         type: String
     }
 }, {

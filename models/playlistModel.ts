@@ -8,7 +8,7 @@ export interface PlaylistModelInterface {
     title: string;
     coverURL: string;
     videos: VideoModelInterface[];
-    popularity?: string;
+    popularity?: Number;
     free?: boolean;
 }
 
@@ -18,7 +18,7 @@ const PlaylistSchema = new Schema(
     {
         owner: {type: Schema.Types.ObjectId, ref:"User" , required: true} ,
         coverURL: {type: String},
-        popularity: { type: String},
+        popularity: { type: Number},
         title: {type: String, required: true},
         free: {type: String}
     },

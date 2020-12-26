@@ -10,7 +10,7 @@ class CommentsController {
 
     async create (req: express.Request, res: express.Response) {
         try {
-            console.log(123123123);
+     
             const user = req.user as UserModelInterface;
             console.log(user);
             

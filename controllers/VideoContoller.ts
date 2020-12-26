@@ -3,6 +3,7 @@ import { validationResult } from 'express-validator';
 
 import { UserModelInterface } from '../models/UserModel';
 import { VideoModel } from '../models/VideoModel';
+import { CommentsModel } from '../models/commentsModel';
 import { isValidObjectId } from '../utils/isValidObjectId';
 
 class VideoController {
@@ -43,9 +44,14 @@ class VideoController {
             
         }
     }
+    //COUNT COMMENTS FOR VIDEOS LIST PAGE
+    async  commentsCount (idVideo : any) {
+        const comments = await CommentsModel.find({ video: idVideo}).exec();
+        return comments.length;
+      }
 
     async index_byPlatlistID(req: express.Request, res: express.Response): Promise<void> {
-        try {
+        // try {
             const user = req.user as UserModelInterface;
             if (user?._id) {
                 const errors = validationResult(req);
@@ -57,21 +63,32 @@ class VideoController {
             const idplaylist = req.params.id;
 
          const videos = await VideoModel.find({ playlist: idplaylist}).exec();
-          
+           
+             
+          var results: number[] = await Promise.all(videos.map(
+              async (item): Promise<any> => {
+                item.commentsCount =  String(await (await CommentsModel.find({ video: item._id})).length);
+                return item;
+              }
+          ))
+            
+
+           console.log(results);
+    
          
 
          res.json({
              status: 'success',
-             data: videos,
+             data: results,
          });
     } 
-        }
-        catch (error) {
-            res.status(500).json({
-                status: 'error',
-                message: error,
-            });
-        }
+        // }
+        // catch (error) {
+        //     res.status(500).json({
+        //         status: 'error',
+        //         message: error,
+        //     });
+        // }
     }
 
 

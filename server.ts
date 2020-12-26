@@ -28,6 +28,8 @@ app.use(passport.initialize());
 
 app.get('/users/me', passport.authenticate('jwt', { session: false }), UserCtrl.getUserInfo);
 app.get('/users/all', UserCtrl.index);
+app.patch('/user/me', passport.authenticate('jwt'), UserCtrl.update);
+
 
 app.get('/auth/verify', registerValidations ,UserCtrl.verify);
 
@@ -62,9 +64,17 @@ app.get('/comments/:idvideo' , passport.authenticate('jwt'), CommentsCtrl.index)
 
 //Подписка
 
+app.get('/subscribes', passport.authenticate('jwt'), SubscribeCtrl.index);
 app.post('/subscribes', passport.authenticate('jwt'), SubscribeCtrl.create);
+app.delete('/subscribes/:id', passport.authenticate('jwt'), SubscribeCtrl.delete);
 
+//test
+app.get('/profileinfo', passport.authenticate('jwt'), PlaylistCtrl.index_views);
+app.get('/profile/:id', passport.authenticate('jwt'), PlaylistCtrl.index_visit);
+app.get('/popular', passport.authenticate('jwt'), PlaylistCtrl.index_popular_playlists);
+app.get('/mysubscribes', passport.authenticate('jwt'), PlaylistCtrl.index_subscribe)
 //Файлы
+
 
 app.post('/files/upload', async (req, res) => {
     try {

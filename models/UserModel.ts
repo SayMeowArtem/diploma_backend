@@ -9,8 +9,9 @@ export interface UserModelInterface {
     password: string;
     confirmHash: string;
     select: string;
+    avatar?: string;
     confirmed?: boolean;
-    location?: string;
+    discription?: string;
     about?: string;
 }
 
@@ -44,11 +45,14 @@ const UserSchema = new Schema<UserModelInterface>({
         type: Boolean,
         default: false
     },
+    avatar: {
+        type: String,
+    },
     select: {
         type: String,
         required: true
     },
-    location: String,
+    discription: String,
     about: String
 }, {
     timestamps: true

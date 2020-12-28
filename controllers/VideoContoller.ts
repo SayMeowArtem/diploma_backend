@@ -28,18 +28,33 @@ class VideoController {
 
     async viewsPlus(req: express.Request, res: express.Response): Promise<void> {
         try {
+            const user = req.user as UserModelInterface;
+            if (user?._id) {
+                const errors = validationResult(req);
+                
+                if (!errors.isEmpty()) {
+                    res.status(400).json({status: 'error', errors: errors.array()});
+                    return;
+                }
+
             const idVideo = req.params.id;
-            console.log(idVideo);
+           
             const video = await VideoModel.findById(idVideo);
-            console.log(video);
             if (video) {
-                let views = video.views;
-                video.views = String( Number(views) + 1);
-                video.save();
-                res.status(200).send();
+           
+                if (String(video.owner._id) !== String(user._id)){
+                    let views = video.views;
+                    video.views = String( Number(views) + 1);
+                    video.save();
+                    res.status(200).send();
+                }
+                else {
+
+                }
+              
             }
            
-
+        }
         } catch (error) {
             
         }
@@ -51,7 +66,7 @@ class VideoController {
       }
 
     async index_byPlatlistID(req: express.Request, res: express.Response): Promise<void> {
-        // try {
+        try {
             const user = req.user as UserModelInterface;
             if (user?._id) {
                 const errors = validationResult(req);
@@ -72,8 +87,6 @@ class VideoController {
               }
           ))
             
-
-           console.log(results);
     
          
 
@@ -82,13 +95,13 @@ class VideoController {
              data: results,
          });
     } 
-        // }
-        // catch (error) {
-        //     res.status(500).json({
-        //         status: 'error',
-        //         message: error,
-        //     });
-        // }
+        }
+        catch (error) {
+            res.status(500).json({
+                status: 'error',
+                message: error,
+            });
+        }
     }
 
 

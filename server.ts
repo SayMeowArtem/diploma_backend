@@ -69,10 +69,15 @@ app.post('/subscribes', passport.authenticate('jwt'), SubscribeCtrl.create);
 app.delete('/subscribes/:id', passport.authenticate('jwt'), SubscribeCtrl.delete);
 
 //test
+
+app.get('/chartdata', passport.authenticate('jwt'), PlaylistCtrl.index_chartdata);
+app.get('/chartdata2', passport.authenticate('jwt'), PlaylistCtrl.index_chartdata2);
+
 app.get('/profileinfo', passport.authenticate('jwt'), PlaylistCtrl.index_views);
 app.get('/profile/:id', passport.authenticate('jwt'), PlaylistCtrl.index_visit);
 app.get('/popular', passport.authenticate('jwt'), PlaylistCtrl.index_popular_playlists);
-app.get('/mysubscribes', passport.authenticate('jwt'), PlaylistCtrl.index_subscribe)
+app.get('/newplaylist', passport.authenticate('jwt'),PlaylistCtrl.index_newplaylists);
+app.get('/mysubscribes', passport.authenticate('jwt'), PlaylistCtrl.index_subscribe);
 //Файлы
 
 

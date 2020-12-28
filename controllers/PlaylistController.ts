@@ -7,7 +7,151 @@ import { validationResult } from 'express-validator/src/validation-result';
 import { isValidObjectId } from '../utils/isValidObjectId';
 
 
+
 class PlaylistController {
+    async index_chartdata3 (req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const user = req.user as UserModelInterface;
+            if (user?._id) {
+                const errors = validationResult(req);
+                
+                if (!errors.isEmpty()) {
+                    res.status(400).json({status: 'error', errors: errors.array()});
+                    return;
+                }
+                //@ts-ignore
+                const subscribe = await SubscribeModel.find({ author: user._id },).exec();
+                const users = await UserModel.find({confirmed: true}).exec();
+
+                const result = [
+                    {x:'Пользователей'  , y:users.length},
+                    {x:'Подписчиков', y: subscribe.length },
+                ]
+               
+            
+                res.json({
+                    status: 'success',
+                    //@ts-ignore
+                    data: result
+                });
+                  
+            }
+        } catch (error) {
+            
+        }
+    }
+    async index_chartdata2(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const user = req.user as UserModelInterface;
+            if (user?._id) {
+                const errors = validationResult(req);
+                
+                if (!errors.isEmpty()) {
+                    res.status(400).json({status: 'error', errors: errors.array()});
+                    return;
+                }
+                //@ts-ignore
+                const subscribe = await SubscribeModel.find({ author: user._id },).exec();
+                const users = await UserModel.find({confirmed: true}).exec();
+
+                const result = [
+                    {x:'Пользователей'  , y:users.length},
+                    {x:'Подписчиков', y: subscribe.length },
+                ]
+               
+            
+                res.json({
+                    status: 'success',
+                    //@ts-ignore
+                    data: result
+                });
+                  
+            }
+        } catch (error) {
+            
+        }
+    }
+
+    async index_chartdata(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const user = req.user as UserModelInterface;
+            if (user?._id) {
+                const errors = validationResult(req);
+                
+                if (!errors.isEmpty()) {
+                    res.status(400).json({status: 'error', errors: errors.array()});
+                    return;
+                }
+                //@ts-ignore
+                const playlists = await PlaylistModel.find({ owner: user._id },).populate(["owner"]).exec();
+                let result ;
+                if (playlists) {
+                    result =  playlists.map( el => {
+                        if (el.popularity && el.popularity > 0) {
+                            return ({
+                                x: el.title,
+                                y: el.popularity
+                            })
+                        }
+                    }).filter( el => el != null);
+                }
+             
+                     
+                    console.log(result);
+                res.json({
+                    status: 'success',
+                    data: result
+                });
+                  
+            }
+        } catch (error) {
+            
+        }
+    }
+
+    async index_newplaylists(req: express.Request, res: express.Response): Promise<void> {
+        try {
+            const user = req.user as UserModelInterface;
+            if (user?._id) {
+                const errors = validationResult(req);
+                
+                if (!errors.isEmpty()) {
+                    res.status(400).json({status: 'error', errors: errors.array()});
+                    return;
+                }
+                    const Subscribe = await SubscribeModel.find({ subscriber: user._id}).exec();
+              
+                    var playlists: any[] = await Promise.all(Subscribe.map(
+                        async (item): Promise<any> => {
+                            //@ts-ignore
+                            const newplaylists = await PlaylistModel.find({ owner : item.author._id}).populate('owner').exec();
+                           
+                            return newplaylists;
+                           
+                        }
+                    ))
+                    
+                    
+                    var mergedPlaylists = [].concat.apply([], playlists);
+
+                    mergedPlaylists.sort(function(a: any,b : any){
+                        //@ts-ignore
+                        return new Date(b.createdAt) - new Date(a.createdAt);
+                      });
+
+            
+                     mergedPlaylists.splice(12);
+                     
+                    res.json({
+                        status: 'success',
+                        data: mergedPlaylists,
+                    });
+                  
+            }
+        } catch (error) {
+            
+        }
+    }
 
     async index_popular_playlists(req: express.Request, res: express.Response): Promise<void> {
         try {
@@ -20,7 +164,7 @@ class PlaylistController {
                     return;
                 }
 
-                const Playlists = await PlaylistModel.find({ }).exec();
+                const Playlists = await PlaylistModel.find({ }).populate('owner').exec();
                 
                 var results: number[] = await Promise.all(Playlists.map(
                     async (item): Promise<any> => {
@@ -28,13 +172,18 @@ class PlaylistController {
                         let sumViews: any = 0;
                         videos.forEach(el => sumViews += parseInt(el.views))
                         item.popularity = sumViews;
+                        item.save();
                         return item;
                     }
             
                 ))
                     //@ts-ignore
                     results.sort((a,b) => a.popularity > b.popularity ? -1: 1);
-                    results.splice(3);
+                    results.splice(4);
+
+                
+
+
                 res.json({
                     status: 'success',
                     data: results,

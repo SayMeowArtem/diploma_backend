@@ -8,7 +8,7 @@ export interface UserModelInterface {
     username: string;
     password: string;
     confirmHash: string;
-    select: string;
+    // select: string;
     avatar?: string;
     confirmed?: boolean;
     discription?: string;
@@ -48,10 +48,10 @@ const UserSchema = new Schema<UserModelInterface>({
     avatar: {
         type: String,
     },
-    select: {
-        type: String,
-        required: true
-    },
+    // select: {
+    //     type: String,
+    //     required: true
+    // },
     discription: String,
     about: String
 }, {

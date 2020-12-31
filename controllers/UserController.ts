@@ -5,13 +5,17 @@ import { validationResult } from 'express-validator';
 import { SendEmail } from '../utils/sendMail';
 
 import jwt from 'jsonwebtoken';
+import { SubscribeModel } from '../models/subscribeModel';
+import { PlaylistModel } from '../models/playlistModel';
+
+
 
 
 class UserController {
    async index(_: any, res: express.Response): Promise<void> {
        try {
        
-         const users = await UserModel.find({}).exec();
+         const users = await UserModel.find({}).populate("author").exec();
          res.json({
              status: 'success',
              data: users,
@@ -25,6 +29,45 @@ class UserController {
        }
    }
 
+   async index_counts(req: express.Request, res: express.Response): Promise<void> {
+    // try {
+        const user = req.user as UserModelInterface;
+        if (user?._id) {
+            const errors = validationResult(req);
+            
+            if (!errors.isEmpty()) {
+                res.status(400).json({status: 'error', errors: errors.array()});
+                return;
+            }
+            let UserSelected;
+            const id = req.params.id
+            if (id.match(/^[0-9a-fA-F]{24}$/)) {
+                UserSelected = await UserModel.findById(id).exec();
+              }
+
+              
+
+        console.log(UserSelected);
+     
+            if (UserSelected) {
+                let subscribesCount = (await SubscribeModel.find({author: UserSelected._id}).exec()).length;
+                let coursesCount = (await PlaylistModel.find({owner: UserSelected._id}).exec()).length;
+              let obj = {
+                subscribesCount,
+                coursesCount
+              }
+                res.status(200).json({
+                    status: 'success',
+                    data: obj
+                });
+            }
+       
+       
+    }
+    // } catch (error) {
+        
+    // }
+}
    
 
    async update(req: express.Request, res: express.Response): Promise<void> {
@@ -79,20 +122,18 @@ class UserController {
                email: req.body.email,
                username: req.body.username,
                fullname: req.body.fullname,
-               select: req.body.select,
                password: generateMD5(req.body.password + process.env.SECRET_KEY),
                confirmHash: generateMD5(process.env.SECRET_KEY + Math.random().toString()),
            }
            
-           const user = await UserModel.create(data);
+           const user =  await UserModel.create(data);
             
            SendEmail(
                {
-                   emailFrom: 'wotgamelol@gmail.com',
+                   emailFrom: 'learnspecial192@mail.ru',
                    emailTo: data.email,
                    subject: 'Подтверждение почты на LearnSpecial',
-                   html: `Для того, чтобы подтвердить почту, перейдите <a href="http://localhost:${
-                    process.env.PORT || 8888}/auth/verify?hash=${data.confirmHash}"> по данной ссылке </a>`,
+                   html: `Для того, чтобы подтвердить почту, перейдите <a href="http://localhost:${3000}/auth/verify?hash=${data.confirmHash}"> по данной ссылке </a>`,
                },
                (err: Error | null) => {
                     if (err) {
@@ -134,8 +175,8 @@ class UserController {
                 await user.save();
 
                 res.json({
-                    status: 'succes',
-                    data: user.toJSON(),
+                    status: 'success',
+                    message: 'аккаунт подтвержден'
                 });
             }
             else {

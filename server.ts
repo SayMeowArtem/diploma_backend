@@ -69,7 +69,7 @@ app.post('/subscribes', passport.authenticate('jwt'), SubscribeCtrl.create);
 app.delete('/subscribes/:id', passport.authenticate('jwt'), SubscribeCtrl.delete);
 
 //test
-
+app.get('/infoCount/:id', passport.authenticate('jwt'), UserCtrl.index_counts);
 app.get('/chartdata', passport.authenticate('jwt'), PlaylistCtrl.index_chartdata);
 app.get('/chartdata2', passport.authenticate('jwt'), PlaylistCtrl.index_chartdata2);
 

@@ -1,11 +1,12 @@
 import nodemailer from 'nodemailer';
 
 const options = {
-  host: process.env.NODEMAILER_HOST || 'smtp.mailtrap.io',
-  port: Number(process.env.NODEMAILER_PORT) || 2525,
+  host: 'smtp.mail.ru',
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.NODEMAILER_USER,
-    pass: process.env.NODEMAILER_PASS,
+    user: 'learnspecial192@mail.ru',
+    pass: 'asdasdfq213',
   },
 };
 
